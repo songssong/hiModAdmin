@@ -39,12 +39,17 @@ export default function Reportpost(props) {
               console.log(i)
               const element = report[i].postid;
               console.log(element)
-             firestore.collection("Post").doc(element).get()
-           .then((doc)=>{
-               report[i]["contentText"] = doc.data().contentText
+             firestore.collection("Post").where("postid","==", element).get()
+             .then((querySnapshot)=>{
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.data());
+                report[i]["contentText"] = doc.data().contentText
                report[i]["student"] = doc.data().student
                report[i]["titleName"] = doc.data().titleName
                report[i]["catagory"] = doc.data().catagory
+            });
+              
            }).then(()=>{
             setreportpost(report)
             // setLoading(false);  
@@ -80,7 +85,12 @@ export default function Reportpost(props) {
     selectedItemKeys.forEach(element => {
       var deletereport = firestore.collection("Report").where("postid", "==", element.postid)
 
-     firestore.collection("Post").doc(element.postid).delete();
+      var deletepost = firestore.collection("Post").where("postid", "==", element.postid)
+      
+      deletepost.get().then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          doc.ref.delete();
+        })})
       
      deletereport.get().then(function(querySnapshot) {
       querySnapshot.forEach(function(doc) {

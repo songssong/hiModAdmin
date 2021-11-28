@@ -154,6 +154,7 @@ export default function Activity(props) {
                       width="auto"
                     />
                      <Column dataField="amount" width={140} />
+                     <Column dataField="count" width={140} joined />
                     <Column dataField="date" width={140} />
                     <Column dataField="time" width={140} />
                     

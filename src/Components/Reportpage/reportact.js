@@ -37,10 +37,12 @@ export default function Reportact(props) {
               console.log(element)
              firestore.collection("Activity").doc(element).get()
            .then((doc)=>{
-            //    report[i]["contentText"] = doc.data().contentText
-            //    report[i]["student"] = doc.data().student
-            //    report[i]["titleName"] = doc.data().titleName
-            //    report[i]["catagory"] = doc.data().catagory
+               report[i]["contentText"] = doc.data().contentText
+               report[i]["student"] = doc.data().student
+               report[i]["titleName"] = doc.data().titleName
+               report[i]["catagory"] = doc.data().catagory
+               report[i]["activityid"] = doc.data().activityid
+               report[i]["timestamp"] = doc.data().timestamp
            }).then(()=>{
             setreportact(report)
 
@@ -102,6 +104,7 @@ export default function Reportact(props) {
  
   console.log(selectedItemKeys); 
     return(
+      
         <div>
             <Navbar/>
             <Drawer/>
@@ -143,7 +146,7 @@ export default function Reportact(props) {
                     <Sorting mode="multiple" />
 
                     <Column
-                      dataField="postid"
+                      dataField="activityid"
                       allowSorting={true}
                       width="auto"
                     />

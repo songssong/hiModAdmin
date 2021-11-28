@@ -38,16 +38,20 @@ export default function Reportlost(props) {
         }).then(()=>{
             for (let i = 0; i < report.length; i++) {
                 console.log(i)
-                const element = report[i].postid;
+                const element = report[i].lostandfoundid;
                 console.log(element)
-               firestore.collection("LostandFound").doc(element).get()
-             .then((doc)=>{
-
-                 report[i]["contentText"] = doc.data().contentText
-                 report[i]["student"] = doc.data().student
-                 report[i]["titleName"] = doc.data().titleName
-                 report[i]["typeName"] = doc.data().typeName
-                 report[i]["urlImage"] = doc.data().urlImage
+               firestore.collection("LostandFound").where("lostandfoundid","==", element).get()
+             .then((querySnapshot)=>{
+                querySnapshot.forEach((doc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  console.log(doc.data());
+                  report[i]["contentText"] = doc.data().contentText
+                   report[i]["student"] = doc.data().student
+                   report[i]["titleName"] = doc.data().titleName
+                   report[i]["typeName"] = doc.data().typeName
+                   report[i]["urlImage"] = doc.data().urlImage
+              });
+                // 
              }).then(()=>{
               setreportlost(report)
 
@@ -88,14 +92,23 @@ export default function Reportlost(props) {
   };
   const Delete = () => {
     selectedItemKeys.forEach(element => {
-      var deletereport = firestore.collection("Report").where("postid", "==", element.postid)
+      var deletereport = firestore.collection("Report").where("lostandfoundid", "==", element.lostandfoundid)
 
-     firestore.collection("LostandFound").doc(element.postid).delete();
+     var deletepost = firestore.collection("LostandFound").where("lostandfoundid","==",element.lostandfoundid)
       
+     deletepost.get().then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+        doc.ref.delete();
+      })})
+
      deletereport.get().then(function(querySnapshot) {
       querySnapshot.forEach(function(doc) {
         doc.ref.delete();
-      })})})}
+      })})}
+      
+      )
+      
+    }
    
    
   const renderTime = (cellData) => {
@@ -164,7 +177,7 @@ export default function Reportlost(props) {
                     <Sorting mode="multiple" />
 
                     <Column
-                      dataField="postid"
+                      dataField="lostandfoundid"
                       allowSorting={true}
                       width="auto"
                     />
@@ -190,7 +203,7 @@ export default function Reportlost(props) {
                       allowFiltering={false}
                       width={140}
                     />
-                                        <Column dataField="typeName" width={140}  caption="Type"/>
+                                        <Column dataField="typeName" width={100}  caption="Type"/>
                                         <Column dataField="student" width={140}  caption="Student"/>
 
                     <Column
